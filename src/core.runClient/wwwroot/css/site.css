@@ -36,3 +36,17 @@ textarea {
     display: none
   }
 }
+
+.navbar-inverse {
+    background-color: #3F2860;
+    border-color: #3F2860;
+}
+
+th{
+    background-color:#90C5A9;
+}
+/*
+    #7A9A95
+    #EF6D3B
+    #FA8B60
+*/

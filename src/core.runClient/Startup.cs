@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using core.phoneDevice;
 
 namespace core.runClient
 {
@@ -33,6 +34,10 @@ namespace core.runClient
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //注入DeviceManage
+            services.AddSingleton<DeviceManage>();
+
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
@@ -68,5 +73,8 @@ namespace core.runClient
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+
+
     }
 }
