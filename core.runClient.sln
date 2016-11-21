@@ -14,6 +14,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "core.runClient", "src\core.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "core.phoneDevice", "src\core.phoneDevice\core.phoneDevice.xproj", "{D3A8DAF3-91AF-440E-B06A-06C02378D792}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "core.runClient.DataEntities", "src\core.runClient.DataEntities\core.runClient.DataEntities.xproj", "{F17924B5-D468-420D-BFFF-D8870C665A19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{D3A8DAF3-91AF-440E-B06A-06C02378D792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3A8DAF3-91AF-440E-B06A-06C02378D792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3A8DAF3-91AF-440E-B06A-06C02378D792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F17924B5-D468-420D-BFFF-D8870C665A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F17924B5-D468-420D-BFFF-D8870C665A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F17924B5-D468-420D-BFFF-D8870C665A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F17924B5-D468-420D-BFFF-D8870C665A19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,5 +41,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{94B8EE72-E3EB-4C70-92BC-272BFE364C95} = {C5D6F047-641C-48F1-B70D-5BD25192350E}
 		{D3A8DAF3-91AF-440E-B06A-06C02378D792} = {C5D6F047-641C-48F1-B70D-5BD25192350E}
+		{F17924B5-D468-420D-BFFF-D8870C665A19} = {C5D6F047-641C-48F1-B70D-5BD25192350E}
 	EndGlobalSection
 EndGlobal

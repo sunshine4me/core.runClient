@@ -1,6 +1,6 @@
 ﻿@model List<core.phoneDevice.PhoneModel>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Device List";
 }
 
 
@@ -8,12 +8,24 @@
 <div class="row">
 
     <table class="table table-bordered">
-        <caption>设备列表</caption>
+        <caption>
+            Device List
+            <div class="pull-right">
+                @if (User.Identity.IsAuthenticated) {
+                    <a asp-area="" asp-controller="Home" asp-action="Refresh" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
+
+                    <a asp-area="" asp-controller="Home" asp-action="StartRun" class="btn btn-primary"><span class="glyphicon glyphicon-forward"></span> Run All (@ViewBag.task)</a>
+                }
+
+            </div>
+        </caption>
         <thead>
             <tr>
                 <th>No.</th>
-                <th>deviceName</th>
-                <th>model</th>
+                <th>DeviceName</th>
+                <th>Model</th>
+                <th>Online</th>
+                <th>Run</th>
             </tr>
         </thead>
         <tbody>
@@ -24,9 +36,19 @@
                     <td>@i</td>
                     <td>@m.device</td>
                     <td>@m.model</td>
+                    <td>
+                        <span class="glyphicon glyphicon-globe @(m.online? "online":"")" title="@m.online"></span>
+                    </td>
+                    <td>
+                        @if (m.isRun) {
+                            <span class="glyphicon glyphicon-play online" title="@m.isRun"></span>
+                        } else {
+                            <span class="glyphicon glyphicon-pause" title="@m.isRun"></span>
+                        }
+                    </td>
                 </tr>
             }
-          
+
         </tbody>
     </table>
 </div>

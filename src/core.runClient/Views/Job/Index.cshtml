@@ -1,0 +1,38 @@
+﻿@model List<JobListModel>
+@{
+    ViewData["Title"] = "Job List";
+}
+
+
+
+<div class="row">
+
+    <table class="table table-bordered">
+        <caption>Job List</caption>
+        <thead>
+            <tr>
+                <th>CreateDate</th>
+                <th>JobType</th>
+                <th>TaskCnt</th>
+                <th>Describe</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model) {
+                <tr class="job" onclick="parent.location = '/Task/ByJob/@m.Id';">
+                    <td>@m.CreateDate</td>
+                    <td>@(m.JobType==1?"Smoke Test": "Unknown Type")</td>
+                    <td>@m.TaskCnt</td>
+                    <td>@m.Describe</td>
+                    
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+   
+</div>
+
+
+@Html.Pagination((int)ViewBag.page, (int)ViewBag.total, (int)ViewBag.row)

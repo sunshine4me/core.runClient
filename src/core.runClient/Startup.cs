@@ -8,6 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using core.phoneDevice;
+using core.runClient.DataEntities;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace core.runClient
 {
@@ -32,16 +36,42 @@ namespace core.runClient
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
+
+            //数据库注入
+            services.AddDbContext<runClientDbContext>(options => options.UseSqlite("Filename=App_Data/runClientDb.db"));
 
             //注入DeviceManage
             services.AddSingleton<DeviceManage>();
 
+            //注入自定义配置
+            services.AddOptions();
+            services.Configure<AppSetting>(Configuration.GetSection("AppSetting"));
+
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddMvc();
+            services
+               .AddMvc()
+               .AddJsonOptions(r => {//设置json相关参数
+                   r.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();//设置默认规则,首字母不强制小写
+                   r.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;//忽略null值
+                   r.SerializerSettings.DateFormatString = "yyyy-MM-dd hh:mm:ss";//时间格式化
+               });
+
+            var bsp = services.BuildServiceProvider();
+            runClient.Task.SmokeTestTask.Provider = bsp;
+
+            var dm = bsp.GetService<DeviceManage>();
+
+            var db = bsp.GetService<runClientDbContext>();
+            var stts = (from t in db.JobsTask
+                        where t.RunStatus == 0
+                        select new runClient.Task.SmokeTestTask {
+                            CaseFilePath = t.CaseFilePath,
+                            ResultPath = t.CaseFilePath
+                        }).ToList<phoneDevice.Interface.CustomTask>();
+            dm.addPublicTask(stts);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +95,21 @@ namespace core.runClient
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
+
+
+            //权限相关
+            app.UseCookieAuthentication(new CookieAuthenticationOptions {
+                //CookieHttpOnly = true,
+                //ExpireTimeSpan = TimeSpan.FromDays(1),
+                AuthenticationScheme = "core.runClient",
+                LoginPath = new PathString("/Login"),
+                AccessDeniedPath = new PathString("/Login/Forbidden"),
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                //CookieName = ".mcookie",
+                //CookiePath = "/",
+            });
+
 
             app.UseMvc(routes =>
             {

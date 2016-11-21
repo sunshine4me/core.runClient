@@ -19,28 +19,65 @@ namespace core.phoneDevice {
             
 
         }
-        public void init() {
+        private void init() {
             var result = ExtCommand.Shell("adb", "devices");
-
-            foreach (Match mch in Regex.Matches(result, "\\r\\n.*\\tdevice")) {
+            foreach (Match mch in Regex.Matches(result, "\\n.*\\tdevice")) {
                 string x = mch.Value;
-                x = x.Substring(0, x.LastIndexOf("device"));
-                PhoneModel pd = new PhoneModel(CQs);
-                pd.device = x.Trim();
-                pml.Add(pd);
+                x = x.Substring(0, x.LastIndexOf("device")).Trim();
+                if (pml.FirstOrDefault(t => t.device == x) == null) {
+                    PhoneModel pm = new PhoneModel(CQs);
+                    pm.device = x;
+                    pm.online = true;
+                    string modresult = ExtCommand.Shell("adb", $"-s {pm.device} shell getprop ro.product.model");
+                    pm.model = modresult.Trim();
+                    pml.Add(pm);
+                }
+            }
+        }
 
+        public void RefreshDevice() {
+
+            var ds = new List<string>();
+
+            var result = ExtCommand.Shell("adb", "devices");
+            
+
+            foreach (Match mch in Regex.Matches(result, "\\n.*\\tdevice")) {
+                string x = mch.Value;
+                x = x.Substring(0, x.LastIndexOf("device")).Trim();
+                ds.Add(x);
+                if (pml.FirstOrDefault(t => t.device == x) == null) {
+                    PhoneModel pm = new PhoneModel(CQs);
+                    pm.device = x;
+                    pm.online = true;
+                    string modresult = ExtCommand.Shell("adb", $"-s {pm.device} shell getprop ro.product.model");
+                    pm.model = modresult.Trim();
+                    pml.Add(pm);
+                }
             }
 
-            foreach (var pm in pml) {
-                string modresult = ExtCommand.Shell("adb", $"-s {pm.device} shell getprop ro.product.model");
-                pm.model = modresult.Trim();
-            }
+            pml.Where(t => !ds.Contains(t.device)).ToList().ForEach(t => t.online = false);
 
+            pml.Where(t => ds.Contains(t.device)).ToList().ForEach(t => t.online = true);
 
         }
 
 
-       
+
+        public void addPublicTask(CustomTask CT) {
+
+            CQs.Enqueue(CT);
+
+        }
+
+        public void addPublicTask(List<CustomTask> CTS) {
+            foreach(var CT in CTS) {
+                CQs.Enqueue(CT);
+            }
+        }
+
+
+
 
 
         public void run() {

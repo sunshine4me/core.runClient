@@ -42,6 +42,11 @@ textarea {
     border-color: #3F2860;
 }
 
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    color: #fff;
+    background-color:  #EF6D3B;
+}
+
 th{
     background-color:#90C5A9;
 }
@@ -50,3 +55,32 @@ th{
     #EF6D3B
     #FA8B60
 */
+
+span.online{
+    color:#3425ff;
+}
+
+i{
+    color: #4078c0;
+    text-decoration: none;
+    cursor:pointer;
+}
+
+th.setting{
+    width:120px;
+}
+
+/*验证控件,显示样式*/
+.input-validation-error {
+    border: 1px dotted red;
+}
+
+tr.job{
+    cursor:pointer;
+}
+
+tr.job:hover{
+    background:#7A9A95 !important;
+    color:cyan;
+
+}

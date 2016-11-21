@@ -1,0 +1,43 @@
+﻿@model List<TaskListModel>
+@{
+    ViewData["Title"] = "Task List";
+}
+
+
+
+<div class="row">
+    
+
+
+    <table class="table table-bordered">
+        <caption>No Run Task List <span class="pull-right">Total: @ViewBag.total</span></caption>
+        <thead>
+            <tr>
+                <th>JobType</th>
+                <th>Name</th>
+                <th>ResultType</th>
+                <th>RunDate</th>
+                <th>JobId</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model) {
+                <tr class="Task">
+                    <td>@(m.JobType == 1 ? "Smoke Test" : "Unknown Type")</td>
+                   
+                    <td>@m.Name</td>
+                    <td>@(m.RunStatus == 0?"No Run": "Complete")</td>
+                    <td>@m.RunDate</td>
+                    <td>@m.JobId</td>
+                    
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+   
+</div>
+
+
+@Html.Pagination((int)ViewBag.page, (int)ViewBag.total, (int)ViewBag.row)

@@ -18,6 +18,8 @@ namespace core.phoneDevice
 
         public string model { get; set; }
 
+        public bool online { get; set; }
+
         public bool isRun { get; set; }
 
 
@@ -42,7 +44,7 @@ namespace core.phoneDevice
             CustomTask workItem;
             bool dequeueSuccesful = false;
             while (true) {
-
+                if (!online) break;
                 dequeueSuccesful = privateQueue.TryDequeue(out workItem);
 
                 if (!dequeueSuccesful)

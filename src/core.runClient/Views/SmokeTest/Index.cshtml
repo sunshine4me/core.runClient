@@ -1,0 +1,120 @@
+﻿@model List<core.runClient.DataEntities.SmokeTest>
+@{
+    ViewData["Title"] = "SmokeTest List";
+}
+
+
+
+<div class="row">
+
+    <table class="table table-bordered SmokeTest">
+        <caption>SmokeTest List</caption>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>FilePath</th>
+                <th class="setting text-center">Settings</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model) {
+                <tr data-id="@m.Id">
+                    <td>@m.Id</td>
+                    <td class="Name">@m.Name</td>
+                    <td class="FilePath">@m.FilePath</td>
+                    <td class="text-center">
+                        <i class="glyphicon glyphicon-cog edit" data-id="@m.Id"></i>
+                        <i class="glyphicon glyphicon-remove delete" data-id="@m.Id"></i>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addModal"><span class="glyphicon glyphicon-plus"></span> Add New </button>
+</div>
+
+
+<!-- 模态框（修改） -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" data-backdrop="static"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+
+        </div>
+    </div>
+</div>
+
+
+<!-- 模态框（添加） -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" data-backdrop="static"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @Html.Partial("_addSmoke", new SmokeTestAddModel())
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        
+        $("i.edit").click(function () {
+            var id = $(this).data("id");
+            $("#loading").fadeIn(200, function () {
+                $("#editModal .modal-content").load("/SmokeTest/Edit/" + id, function () {
+                    $.validator.unobtrusive.parse($(this));
+
+                    $("#editModal form").submit(function () {
+                        
+                        if (!$(this).valid()) return false;
+                    
+                        jQuery.ajax({
+                            url: $(this).attr("action"),
+                            data: $(this).serialize(),
+                            type: "POST",
+                            success: function (responseText) {
+                                $("table.SmokeTest tr[data-id='" + id + "'] td.Name").html(responseText.Name);
+                                $("table.SmokeTest tr[data-id='" + id + "'] td.FilePath").html(responseText.FilePath);
+                                $('#editModal').modal('hide');
+                            }
+                        });
+                        return false;
+                    })
+
+                    $('#editModal').modal('show');
+                    $("#loading").fadeOut();
+                });
+            })
+
+        })
+
+
+        $("i.delete").click(function () {
+            var p = $(this).parents("tr");
+            if (confirm("确认删除?")) {
+                $.post("/SmokeTest/Delete/", { id: $(this).data("id") }, function (result) {
+                    p.remove();
+                });
+            }
+            
+        })
+
+
+        $('#addModal').on('show.bs.modal', function () {
+            $(this).find("form")[0].reset();
+        })
+
+    </script>
+}
