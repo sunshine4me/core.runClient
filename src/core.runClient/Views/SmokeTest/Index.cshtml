@@ -14,6 +14,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>FilePath</th>
+                <th>ExecuteScript</th>
                 <th class="setting text-center">Settings</th>
             </tr>
         </thead>
@@ -23,17 +24,32 @@
                     <td>@m.Id</td>
                     <td class="Name">@m.Name</td>
                     <td class="FilePath">@m.FilePath</td>
+                    <td class="ExecuteScript">@m.ExecuteScript</td>
                     <td class="text-center">
-                        <i class="glyphicon glyphicon-cog edit" data-id="@m.Id"></i>
-                        <i class="glyphicon glyphicon-remove delete" data-id="@m.Id"></i>
+                        @if (User.Identity.IsAuthenticated) {
+                            <i class="glyphicon glyphicon-play run" data-id="@m.Id"></i>
+                            <i class="glyphicon glyphicon-cog edit" data-id="@m.Id"></i>
+                            <i class="glyphicon glyphicon-remove delete" data-id="@m.Id"></i>
+                        }
                     </td>
                 </tr>
             }
 
         </tbody>
     </table>
-
-    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addModal"><span class="glyphicon glyphicon-plus"></span> Add New </button>
+    
+    @if (User.Identity.IsAuthenticated) {
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addModal"><span class="glyphicon glyphicon-plus"></span> Add New </button>
+        <br />
+        <br />
+    }
+    <b>Script Param</b>
+    <ul class="list">
+        <li>{app} : App File Path</li>
+        <li>{device} : Device Name</li>
+        <li>{casefile} : RunCase File Path</li>
+        <li>{result} : Result Directory</li>
+    </ul>
 </div>
 
 
@@ -69,7 +85,7 @@
     }
 
     <script>
-        
+
         $("i.edit").click(function () {
             var id = $(this).data("id");
             $("#loading").fadeIn(200, function () {
@@ -77,9 +93,9 @@
                     $.validator.unobtrusive.parse($(this));
 
                     $("#editModal form").submit(function () {
-                        
+
                         if (!$(this).valid()) return false;
-                    
+
                         jQuery.ajax({
                             url: $(this).attr("action"),
                             data: $(this).serialize(),
@@ -87,6 +103,7 @@
                             success: function (responseText) {
                                 $("table.SmokeTest tr[data-id='" + id + "'] td.Name").html(responseText.Name);
                                 $("table.SmokeTest tr[data-id='" + id + "'] td.FilePath").html(responseText.FilePath);
+                                $("table.SmokeTest tr[data-id='" + id + "'] td.ExecuteScript").html(responseText.ExecuteScript);
                                 $('#editModal').modal('hide');
                             }
                         });
@@ -103,14 +120,22 @@
 
         $("i.delete").click(function () {
             var p = $(this).parents("tr");
-            if (confirm("确认删除?")) {
+            if (confirm("Confirm delete?")) {
                 $.post("/SmokeTest/Delete/", { id: $(this).data("id") }, function (result) {
                     p.remove();
                 });
             }
-            
+
         })
 
+        $("i.run").click(function () {
+            var p = $(this).parents("tr");
+            if (confirm("Confirm run this test?")) {
+                $.post("/SmokeTest/RunSmoke/", { id: $(this).data("id") }, function (result) {
+                    alert("Start run. You can see the job in job list.");
+                });
+            }
+        })
 
         $('#addModal').on('show.bs.modal', function () {
             $(this).find("form")[0].reset();

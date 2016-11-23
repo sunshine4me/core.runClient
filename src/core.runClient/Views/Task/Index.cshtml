@@ -17,18 +17,15 @@
                 <th>Name</th>
                 <th>ResultType</th>
                 <th>RunDate</th>
-                <th>JobId</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var m in Model) {
-                <tr class="Task">
+                <tr>
                     <td>@(m.JobType == 1 ? "Smoke Test" : "Unknown Type")</td>
-                   
                     <td>@m.Name</td>
                     <td>@(m.RunStatus == 0?"No Run": "Complete")</td>
                     <td>@m.RunDate</td>
-                    <td>@m.JobId</td>
                     
                 </tr>
             }

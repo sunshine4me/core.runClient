@@ -75,11 +75,11 @@ th.setting{
     border: 1px dotted red;
 }
 
-tr.job{
+tr.job,tr.task{
     cursor:pointer;
 }
 
-tr.job:hover{
+tr.job:hover,tr.task:hover{
     background:#7A9A95 !important;
     color:cyan;
 

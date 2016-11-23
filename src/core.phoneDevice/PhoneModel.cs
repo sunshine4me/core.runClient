@@ -40,7 +40,7 @@ namespace core.phoneDevice
 
         public void runTask() {
             Console.WriteLine($"{device}工作线程开始>>>>>>>>>>>");
-            isRun = true;
+          
             CustomTask workItem;
             bool dequeueSuccesful = false;
             while (true) {
@@ -49,13 +49,19 @@ namespace core.phoneDevice
 
                 if (!dequeueSuccesful)
                     dequeueSuccesful = publicQueue.TryDequeue(out workItem);
-          
-                if (dequeueSuccesful)
+
+                if (!dequeueSuccesful) break;
+
+                try {
                     workItem.Run(this);
-                else
+                } catch (Exception e) {
+                    Console.WriteLine($"{device}工作线程关闭<<<<<<<<<<<");
                     break;
+                }
+                    
+               
             }
-            isRun = false;
+          
             Console.WriteLine($"{device}工作线程关闭<<<<<<<<<<<");
         }
     }

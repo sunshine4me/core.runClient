@@ -10,6 +10,12 @@ namespace core.runClient.DataEntities {
         }
 
         public int Id { get; set; }
+
+
+
+        
+
+
         public DateTime CreateDate { get; set; }
         public int TestId { get; set; }
         public int? TestType { get; set; }

@@ -16,6 +16,5 @@ namespace core.runClient.ViewModels
         public DateTime CreateDate { get; set; }
 
 
-
     }
 }

@@ -47,10 +47,12 @@ namespace core.runClient.Controllers
                      where t.JobId == id
                      orderby t.Id descending
                      select new TaskListModel {
+                         Id = t.Id,
                          Name = t.Name,
                          RunStatus = t.RunStatus,
                          RunDate = t.RunDate,
                          JobId = t.JobId,
+                         Device = t.Device,
                          //CaseFilePath = t.CaseFilePath,
                          //ResultPath= t.ResultPath,
                          JobType = t.Job.TestType

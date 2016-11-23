@@ -16,7 +16,15 @@ namespace core.phoneDevice
             }
         }
 
+        public static string Shell(string script) {
 
-       
+            var index = script.IndexOf(" ");
+            var fileName = script.Substring(0, index);
+            var arguments = script.Substring(index + 1, script.Length - index-1);
+            return Shell(fileName, arguments);
+        }
+
+
+
     }
 }

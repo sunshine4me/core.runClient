@@ -19,7 +19,13 @@ namespace core.runClient.DataEntities {
 
         public DateTime? RunDate { get; set; }
 
-        
+        public string Device { get; set; }
+
+        public string ExecuteScript { get; set; }
+
+        public string Param { get; set; }
+
+
 
         public virtual Jobs Job { get; set; }
     }

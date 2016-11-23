@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using core.phoneDevice;
 using core.runClient.DataEntities;
 using Microsoft.AspNetCore.Authorization;
+using core.runClient.Extensions;
 
 namespace core.runClient.Controllers
 {
@@ -28,7 +29,21 @@ namespace core.runClient.Controllers
         }
 
         [Authorize]
-        public IActionResult StartRun([FromServices] DeviceManage dm) {
+        public IActionResult StartRun([FromServices] DeviceManage dm, [FromServices]runClientDbContext db) {
+
+
+         
+
+          
+
+            var jts = from t in db.JobsTask
+                      where t.RunStatus == 0
+                      select t;
+            foreach (var jt in jts) {
+                var CT = jt.ConventToTask();
+                dm.addPublicTask(CT);
+            }
+
             dm.run();
             return RedirectToAction("Index");
         }

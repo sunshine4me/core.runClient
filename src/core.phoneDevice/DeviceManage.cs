@@ -16,7 +16,7 @@ namespace core.phoneDevice {
             pml = new List<PhoneModel>();
             CQs = new ConcurrentQueue<CustomTask>();
             init();
-            
+
 
         }
         private void init() {
@@ -40,7 +40,7 @@ namespace core.phoneDevice {
             var ds = new List<string>();
 
             var result = ExtCommand.Shell("adb", "devices");
-            
+
 
             foreach (Match mch in Regex.Matches(result, "\\n.*\\tdevice")) {
                 string x = mch.Value;
@@ -71,7 +71,7 @@ namespace core.phoneDevice {
         }
 
         public void addPublicTask(List<CustomTask> CTS) {
-            foreach(var CT in CTS) {
+            foreach (var CT in CTS) {
                 CQs.Enqueue(CT);
             }
         }
@@ -82,10 +82,16 @@ namespace core.phoneDevice {
 
         public void run() {
             foreach (var pm in pml) {
-                if (!pm.isRun)
-                    Task.Run(() => pm.runTask());
+                if (!pm.isRun) {
+                    new Action(() => {
+                        pm.runTask();
+                    }).BeginInvoke(r => {
+                        if (r.IsCompleted) {
+                            pm.isRun = false;
+                        }
+                    }, null);
+                }
             }
-
         }
 
 

@@ -13,7 +13,12 @@ namespace core.runClient.ViewModels
         public string CaseFilePath { get; set; }
         public string ResultPath { get; set; }
 
+
+        public string Device { get; set; }
+
         public int JobId { get; set; }
+
+        public int Id { get; set; }
 
         public int? JobType { get; set; }
     }

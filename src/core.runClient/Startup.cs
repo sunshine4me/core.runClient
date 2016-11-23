@@ -12,21 +12,20 @@ using core.runClient.DataEntities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using core.runClient.Extensions;
 
-namespace core.runClient
-{
-    public class Startup
-    {
-        public Startup(IHostingEnvironment env)
-        {
+namespace core.runClient {
+    public class Startup {
+        public Startup(IHostingEnvironment env) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
+            if (env.IsDevelopment()) {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
@@ -37,6 +36,9 @@ namespace core.runClient
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+
+            //开启静态文件目录浏览
+            services.AddDirectoryBrowser();
 
             //数据库注入
             services.AddDbContext<runClientDbContext>(options => options.UseSqlite("Filename=App_Data/runClientDb.db"));
@@ -62,38 +64,40 @@ namespace core.runClient
             var bsp = services.BuildServiceProvider();
             runClient.Task.SmokeTestTask.Provider = bsp;
 
-            var dm = bsp.GetService<DeviceManage>();
-
-            var db = bsp.GetService<runClientDbContext>();
-            var stts = (from t in db.JobsTask
-                        where t.RunStatus == 0
-                        select new runClient.Task.SmokeTestTask {
-                            CaseFilePath = t.CaseFilePath,
-                            ResultPath = t.CaseFilePath
-                        }).ToList<phoneDevice.Interface.CustomTask>();
-            dm.addPublicTask(stts);
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
+
+            //开启静态文件目录浏览
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions() {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "ResultFile")),
+                RequestPath = new PathString("/ResultFile")
+            });
+
+            //静态文件查看
+            app.UseStaticFiles(new StaticFileOptions() {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"ResultFile")),
+                RequestPath = new PathString("/ResultFile")
+            });
+
+
+            loggerFactory.AddConsole(Configuration.GetSection("LoggUseStaticFilesing"));
             loggerFactory.AddDebug();
 
             app.UseApplicationInsightsRequestTelemetry();
 
-            if (env.IsDevelopment())
-            {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
-            }
-            else
-            {
+            } else {
                 app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseApplicationInsightsExceptionTelemetry();
 
+          
             app.UseStaticFiles();
 
 
@@ -111,8 +115,7 @@ namespace core.runClient
             });
 
 
-            app.UseMvc(routes =>
-            {
+            app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
