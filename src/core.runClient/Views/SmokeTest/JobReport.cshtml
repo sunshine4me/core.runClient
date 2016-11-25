@@ -1,6 +1,6 @@
-﻿@model List<TaskListModel>
+﻿@model List<SmokeTaskListModel>
 @{
-    ViewData["Title"] = "Job Task List";
+    ViewData["Title"] = "SmokeJob Report";
 }
 
 
@@ -14,16 +14,18 @@
                 <th>JobType</th>
                 <th>Name</th>
                 <th>ResultType</th>
+                <th>Result</th>
                 <th>Device</th>
                 <th>RunDate</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var m in Model) {
-                <tr class="task" onclick="parent.location = '/Result/@m.Id';">
-                    <td>@(m.JobType == 1 ? "Smoke Test" : "Unknown Type")</td>
+                <tr class="task" onclick="parent.location = '/ResultFile/@m.Id';">
+                    <td>Smoke Test</td>
                     <td>@m.Name</td>
-                    <td>@(m.RunStatus == 0?"No Run": "Complete")</td>
+                    <td>@( m.RunStatus == 0?"No Run": m.RunStatus == 1?"Pass":"Fail")</td>
+                    <td><pre>@m.Result</pre></td>
                     <td>@m.Device</td>
                     <td>@m.RunDate</td>
                     

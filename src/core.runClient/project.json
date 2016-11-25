@@ -25,7 +25,9 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "core.phoneDevice": "1.0.0-*",
     "core.runClient.DataEntities": "1.0.0-*",
-    "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0"
+    "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
+    "NLog.Extensions.Logging": "1.0.0-rtm-alpha4",
+    "System.Text.Encoding.CodePages": "4.3.0"
   },
 
   "tools": {
@@ -57,11 +59,13 @@
   "publishOptions": {
     "include": [
       "wwwroot",
-      "**/*.cshtml",
+      "Views",
       "appsettings.json",
       "web.config",
+      "nlog.config",
       "App_Data",
-      "ResultFile"
+      "ResultFile",
+      "Tools"
     ]
   },
 

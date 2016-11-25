@@ -12,9 +12,9 @@
         <link rel="stylesheet" href="~/css/loading.css" />
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/loading.css"  />
+        <link rel="stylesheet" href="~/css/loading.css" />
     </environment>
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
@@ -46,16 +46,18 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Device List</a></li>
 
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Job Manage
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-sw">
-                            <li><a asp-area="" asp-controller="SmokeTest" asp-action="Index">SmokeTest</a></li>
-                        </ul>
+                    @if (User.Identity.IsAuthenticated) {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Job Manage
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-sw">
+                                <li><a asp-area="" asp-controller="SmokeTest" asp-action="Index">SmokeTest</a></li>
+                            </ul>
 
-                    </li>
+                        </li>
+                    }
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -63,8 +65,8 @@
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-sw">
-                            <li><a asp-area="" asp-controller="Job" asp-action="Index">Job List</a></li>
-                            <li><a asp-area="" asp-controller="Task" asp-action="Index">Task List</a></li>
+                            <li><a asp-area="" asp-controller="SmokeTest" asp-action="Job">SmokeTest Job List</a></li>
+                            <li><a asp-area="" asp-controller="RunQueue" asp-action="Index">RunQueue List</a></li>
                         </ul>
 
                     </li>

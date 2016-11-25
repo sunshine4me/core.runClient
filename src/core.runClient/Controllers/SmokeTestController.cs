@@ -16,7 +16,7 @@ using core.runClient.Extensions;
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace core.runClient.Controllers {
-    [Authorize]
+    
     public class SmokeTestController : Controller {
         runClientDbContext db;
         public SmokeTestController(runClientDbContext _db) {
@@ -24,28 +24,30 @@ namespace core.runClient.Controllers {
         }
 
 
-        [AllowAnonymous]
+   
         public IActionResult Index() {
             return View(db.SmokeTest.ToList());
         }
-        [AllowAnonymous]
+ 
         [HttpPost]
-        public void RunSmoke(RunSmokeModel rsm, [FromServices] DeviceManage dm) {
+        public IActionResult RunSmoke(RunSmokeModel rsm, [FromServices] DeviceManage dm) {
 
             if (!ModelState.IsValid) {
                 Response.StatusCode = 400;
-                return;
+                return Content("ModelState is not Valid!");
             }
 
             var sm = db.SmokeTest.FirstOrDefault(t => t.Id == rsm.id);
-            if (sm == null) return;
+            if (sm == null) {
+                Response.StatusCode = 400;
+                return Content("Not found your id!"); ;
+            }
 
-            var jb = new Jobs();
+
+            var jb = new SmokeTestJob();
             jb.CreateDate = DateTime.Now;
-            jb.TestId = sm.Id;
-            jb.TestType = 1;//1-smoke
-
-            db.Jobs.Add(jb);
+            jb.SmokeId = sm.Id;
+            db.SmokeTestJob.Add(jb);
 
 
             DirectoryInfo dir = new DirectoryInfo(sm.FilePath);
@@ -53,28 +55,21 @@ namespace core.runClient.Controllers {
 
             List<CustomTask> STTL = new List<CustomTask>();
 
-            List<JobsTask> jbts = new List<JobsTask>();
+            List<SmokeTestJobTask> jbts = new List<SmokeTestJobTask>();
             FileInfo[] allFile = dir.GetFiles();
 
             foreach (FileInfo fi in allFile) {
-
-
-
-
-                var jbt = new JobsTask();
+                var jbt = new SmokeTestJobTask();
                 jbt.JobId = jb.Id;
                 jbt.Name = System.IO.Path.GetFileNameWithoutExtension(fi.Name);
-                jbt.CaseFilePath = fi.FullName;
 
+                jbt.ExecuteScript = sm.ExecuteScript.Replace("{casefile}", fi.FullName);
 
+                jbt.PassMatch = sm.PassMatch;
 
-                Dictionary<string, string> tmpParam = new Dictionary<string, string>();
-                tmpParam["app"] = rsm.app;
-
-                jbt.ExecuteScript = sm.ExecuteScript;
-                jbt.Param = JsonConvert.SerializeObject(tmpParam);
-
-                db.JobsTask.Add(jbt);
+                jbt.PackageName = rsm.packagename;
+                jbt.InstallApkFile = rsm.appfile;
+                db.SmokeTestJobTask.Add(jbt);
                 jbts.Add(jbt);
             }
             db.SaveChanges();
@@ -87,12 +82,14 @@ namespace core.runClient.Controllers {
             }
 
             dm.run();
+
+            return Content(Request.Host.ToString()+"");
         }
 
 
 
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult Edit(int id) {
             var st = db.SmokeTest.First(t => t.Id == id);
@@ -101,10 +98,12 @@ namespace core.runClient.Controllers {
             md.Name = st.Name;
             md.FilePath = st.FilePath;
             md.ExecuteScript = st.ExecuteScript;
+            md.PassMatch = st.PassMatch;
 
             return PartialView("_editSmoke", md);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Edit(SmokeTestEditModel md) {
 
@@ -114,6 +113,7 @@ namespace core.runClient.Controllers {
                 st.ExecuteScript = md.ExecuteScript;
                 st.Name = md.Name;
                 st.FilePath = md.FilePath;
+                st.PassMatch = md.PassMatch;
                 db.SaveChanges();
 
 
@@ -124,6 +124,7 @@ namespace core.runClient.Controllers {
 
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add(SmokeTestAddModel md) {
 
@@ -133,6 +134,7 @@ namespace core.runClient.Controllers {
                 st.ExecuteScript = md.ExecuteScript;
                 st.Name = md.Name;
                 st.FilePath = md.FilePath;
+                st.PassMatch = md.PassMatch;
                 db.SmokeTest.Add(st);
                 db.SaveChanges();
 
@@ -147,7 +149,7 @@ namespace core.runClient.Controllers {
         }
 
 
-
+        [Authorize]
         [HttpPost]
         public void Delete(int id) {
 
@@ -156,6 +158,52 @@ namespace core.runClient.Controllers {
             db.SaveChanges();
 
         }
+
+
+        [HttpGet]
+        public IActionResult Job(int page = 1, int row = 20) {
+
+            var jbs = from JB in db.SmokeTestJob
+                      orderby JB.Id descending
+                      select new SmokeJobListModel {
+                          Describe = "SmokeTest-" + JB.Smoke.Id + "-" + JB.Smoke.Name ,
+                          TaskCnt = JB.SmokeTestJobTask.Count,
+                          Id = JB.Id,
+                          CreateDate = JB.CreateDate
+                      };
+
+
+            ViewBag.total = db.SmokeTestJob.Count();
+            ViewBag.page = page;
+            ViewBag.row = row;
+            return View(jbs.Skip((page - 1) * row).Take(row).ToList());
+
+        }
+        
+
+        [HttpGet]
+        public IActionResult JobReport(int id) {
+
+            var ts = from t in db.SmokeTestJobTask
+                     where t.JobId == id
+                     orderby t.Id descending
+                     select new SmokeTaskListModel {
+                         Id = t.Id,
+                         Name = t.Name,
+                         RunStatus = t.RunStatus,
+                         RunDate = t.RunDate,
+                         JobId = t.JobId,
+                         Device = t.Device,
+                         Result = t.ExecuteScriptResult,
+                         ResultPath = t.ResultPath
+                     };
+
+
+
+            return View(ts.ToList());
+
+        }
+
     }
 
 

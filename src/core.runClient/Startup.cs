@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using core.runClient.Extensions;
+using NLog.Extensions.Logging;
 
 namespace core.runClient {
     public class Startup {
@@ -64,11 +65,15 @@ namespace core.runClient {
             var bsp = services.BuildServiceProvider();
             runClient.Task.SmokeTestTask.Provider = bsp;
 
-           
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
+
+
+           
 
             //开启静态文件目录浏览
             app.UseDirectoryBrowser(new DirectoryBrowserOptions() {
@@ -83,8 +88,12 @@ namespace core.runClient {
             });
 
 
-            loggerFactory.AddConsole(Configuration.GetSection("LoggUseStaticFilesing"));
-            loggerFactory.AddDebug();
+
+            loggerFactory.AddNLog();//添加NLog
+
+
+
+            var log =  loggerFactory.CreateLogger("");
 
             app.UseApplicationInsightsRequestTelemetry();
 

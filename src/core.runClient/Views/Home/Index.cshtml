@@ -34,16 +34,16 @@
                 i++;
                 <tr>
                     <td>@i</td>
-                    <td>@m.device</td>
-                    <td>@m.model</td>
+                    <td>@m.Device</td>
+                    <td>@m.Model</td>
                     <td>
-                        <span class="glyphicon glyphicon-globe @(m.online? "online":"")" title="@m.online"></span>
+                        <span class="glyphicon glyphicon-globe @(m.Online? "online":"")" title="@m.Online"></span>
                     </td>
                     <td>
-                        @if (m.isRun) {
-                            <span class="glyphicon glyphicon-play online" title="@m.isRun"></span>
+                        @if (m.IsRun) {
+                            <span class="glyphicon glyphicon-play online" title="@m.IsRun"></span>
                         } else {
-                            <span class="glyphicon glyphicon-pause" title="@m.isRun"></span>
+                            <span class="glyphicon glyphicon-pause" title="@m.IsRun"></span>
                         }
                     </td>
                 </tr>

@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>FilePath</th>
                 <th>ExecuteScript</th>
+                <th>PassMatch</th>
                 <th class="setting text-center">Settings</th>
             </tr>
         </thead>
@@ -25,6 +26,7 @@
                     <td class="Name">@m.Name</td>
                     <td class="FilePath">@m.FilePath</td>
                     <td class="ExecuteScript">@m.ExecuteScript</td>
+                    <td class="PassMatch">@m.PassMatch</td>
                     <td class="text-center">
                         @if (User.Identity.IsAuthenticated) {
                             <i class="glyphicon glyphicon-play run" data-id="@m.Id"></i>
@@ -37,7 +39,7 @@
 
         </tbody>
     </table>
-    
+
     @if (User.Identity.IsAuthenticated) {
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addModal"><span class="glyphicon glyphicon-plus"></span> Add New </button>
         <br />
@@ -45,7 +47,6 @@
     }
     <b>Script Param</b>
     <ul class="list">
-        <li>{app} : App File Path</li>
         <li>{device} : Device Name</li>
         <li>{casefile} : RunCase File Path</li>
         <li>{result} : Result Directory</li>
@@ -71,6 +72,18 @@
     <div class="modal-dialog">
         <div class="modal-content">
             @Html.Partial("_addSmoke", new SmokeTestAddModel())
+        </div>
+    </div>
+</div>
+
+
+<!-- 模态框（run） -->
+<div class="modal fade" id="testRunModel" tabindex="-1" role="dialog" data-backdrop="static"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            @Html.Partial("_runSmoke", new RunSmokeModel())
         </div>
     </div>
 </div>
@@ -104,6 +117,7 @@
                                 $("table.SmokeTest tr[data-id='" + id + "'] td.Name").html(responseText.Name);
                                 $("table.SmokeTest tr[data-id='" + id + "'] td.FilePath").html(responseText.FilePath);
                                 $("table.SmokeTest tr[data-id='" + id + "'] td.ExecuteScript").html(responseText.ExecuteScript);
+                                $("table.SmokeTest tr[data-id='" + id + "'] td.PassMatch").html(responseText.PassMatch);
                                 $('#editModal').modal('hide');
                             }
                         });
@@ -129,15 +143,31 @@
         })
 
         $("i.run").click(function () {
-            var p = $(this).parents("tr");
-            if (confirm("Confirm run this test?")) {
-                $.post("/SmokeTest/RunSmoke/", { id: $(this).data("id") }, function (result) {
-                    alert("Start run. You can see the job in job list.");
-                });
-            }
+            var id = $(this).data("id");
+          
+                $('#testRunModel').modal('show');
+
+                $('#testRunModel input[name=id]').val(id);
+        })
+
+
+        $("#testRunModel form").submit(function () {
+            if (!$(this).valid()) return false;
+
+            $('#testRunModel').modal('hide');
+
+            $.post("/SmokeTest/RunSmoke/", $(this).serialize(), function (result) {
+                alert("Start run. You can see the job in job list.");
+            });
+            return false;
+           
         })
 
         $('#addModal').on('show.bs.modal', function () {
+            $(this).find("form")[0].reset();
+        })
+
+        $('#testRunModel').on('show.bs.modal', function () {
             $(this).find("form")[0].reset();
         })
 

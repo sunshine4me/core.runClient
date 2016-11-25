@@ -1,0 +1,38 @@
+﻿@model List<QueueListModel>
+@{
+    ViewData["Title"] = "Run Queue List";
+}
+
+
+
+<div class="row">
+    
+
+
+    <table class="table table-bordered">
+        <caption>@ViewData["Title"]<div class="pull-right">Total: @ViewBag.total </div></caption>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>CreateDate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int i = 0;}
+            @foreach (var m in Model) {
+                <tr>
+                    <td>@(i++)</td>
+                    <td>@m.Type</td>
+                    <td>@m.Name</td>
+                    <td>@m.CreateDate</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+

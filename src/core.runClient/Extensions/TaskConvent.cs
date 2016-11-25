@@ -10,14 +10,22 @@ namespace core.runClient.Extensions
 {
     public static class TaskConvent
     {
-        public static CustomTask ConventToTask(this DataEntities.JobsTask jt) {
+        public static CustomTask ConventToTask(this DataEntities.SmokeTestJobTask jt) {
 
             runClient.Task.SmokeTestTask CT = new runClient.Task.SmokeTestTask();
             CT.id = jt.Id;
             CT.ExecuteScript = jt.ExecuteScript;
-            CT.Param = JsonConvert.DeserializeObject<Dictionary<string, string>>(jt.Param);
-            CT.Param["result"] = Path.Combine(Directory.GetCurrentDirectory(), "ResultFile/" + jt.Id);
-            CT.Param["casefile"] = jt.CaseFilePath;
+            CT.PassMatch = jt.PassMatch;
+
+
+            CT.ResultPath = Path.Combine(Directory.GetCurrentDirectory(), $"ResultFile{Path.DirectorySeparatorChar}{jt.Id}");
+
+
+            CT.PackageName = jt.PackageName;
+
+            CT.InstallApkFile = jt.InstallApkFile;
+
+
             return CT;
         }
     }
