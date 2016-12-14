@@ -24,6 +24,7 @@ namespace core.runClient.Controllers
         {
             var md = from t in db.SmokeTestJobTask
                      orderby t.Id descending
+                     where t.RunStatus==0
                      select new QueueListModel {
                          Name = t.Name,
                          Type = "Smoke Test",

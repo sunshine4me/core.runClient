@@ -43,15 +43,15 @@ namespace core.runClient.Task {
                 if(pm.LastInstallApk == null || pm.LastInstallApk.ApkFile != InstallApkFile) {
                     try {
                         if (pm.installApk(InstallApkFile, PackageName))
-                            ExtResult += $"安装apk成功{System.Environment.NewLine}";
+                            ExtResult += $"{InstallApkFile}:安装成功{System.Environment.NewLine}";
                         else
-                            ExtResult += $"安装apk失败:请查看日志{System.Environment.NewLine}";
+                            ExtResult += $"{InstallApkFile}:安装失败:请查看日志{System.Environment.NewLine}";
                     } catch (Exception e) {
-                        ExtResult += $"安装apk失败:{e.StackTrace}{System.Environment.NewLine}";
+                        ExtResult += $"{InstallApkFile}:安装失败:{e.StackTrace}{System.Environment.NewLine}";
                     }
 
                 } else {
-                    ExtResult += $"本机已安装该apk,跳过安装步骤{System.Environment.NewLine}";
+                    ExtResult += $"{InstallApkFile}:本机已安装,跳过安装步骤{System.Environment.NewLine}";
                 }
             }
 

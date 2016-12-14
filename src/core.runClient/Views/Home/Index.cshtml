@@ -24,8 +24,8 @@
                 <th>No.</th>
                 <th>DeviceName</th>
                 <th>Model</th>
-                <th>Online</th>
-                <th>Run</th>
+                <th>Status</th>
+                <th>Setting</th>
             </tr>
         </thead>
         <tbody>
@@ -37,16 +37,31 @@
                     <td>@m.Device</td>
                     <td>@m.Model</td>
                     <td>
-                        <span class="glyphicon glyphicon-globe @(m.Online? "online":"")" title="@m.Online"></span>
+
+                        @if (m.phoneStatus == core.phoneDevice.PhoneStatus.OnLine) {
+
+                            <span class="glyphicon glyphicon-globe online" title="OnLine"></span>
+                        } else if (m.phoneStatus == core.phoneDevice.PhoneStatus.RunCase) {
+                            <span class="glyphicon glyphicon-play online" title="RunCase"></span>
+
+                        } else if (m.phoneStatus == core.phoneDevice.PhoneStatus.OffLine) {
+                            <span class="glyphicon glyphicon-globe" title="OffLine"></span>
+
+                        } else {
+                            <span class="glyphicon glyphicon-remove" title="UnUse"></span>
+
+                        }
+                        
                     </td>
                     <td>
-                        @if (m.IsRun) {
-                            <span class="glyphicon glyphicon-play online" title="@m.IsRun"></span>
-                        } else {
-                            <span class="glyphicon glyphicon-pause" title="@m.IsRun"></span>
+                        @if (User.Identity.IsAuthenticated) {
+                            <a  class="glyphicon glyphicon-remove" onclick='if (!confirm("Confirm UnUsed?")) return false;' href="/Home/UnUsed?device=@m.Device"></a>
+                            <a class="glyphicon glyphicon-ok"  onclick='if (!confirm("Confirm Used?")) return false;' href="/Home/Used?device=@m.Device"></a>
                         }
+
                     </td>
                 </tr>
+
             }
 
         </tbody>

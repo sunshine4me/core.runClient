@@ -83,7 +83,7 @@ namespace core.runClient.Controllers {
 
             dm.run();
 
-            return Content(Request.Host.ToString()+"");
+            return Content("/SmokeTest/JobReport/"+ jb.Id);
         }
 
 

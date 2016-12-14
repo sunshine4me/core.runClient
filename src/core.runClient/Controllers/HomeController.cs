@@ -23,6 +23,23 @@ namespace core.runClient.Controllers
             return View(dm.pml);
         }
 
+        [Authorize]
+        public IActionResult UnUsed(string device, [FromServices] DeviceManage dm) {
+            var pm = dm.pml.First(t => t.Device == device);
+            pm.phoneStatus = PhoneStatus.UnUsed;
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public IActionResult Used(string device, [FromServices] DeviceManage dm) {
+            var pm = dm.pml.First(t => t.Device == device);
+            if (pm.phoneStatus == PhoneStatus.UnUsed)
+                pm.phoneStatus = PhoneStatus.OffLine;
+
+            return RedirectToAction("Index");
+        }
+
         private static string RefreshToken = "true";
         [Authorize]
         public IActionResult Refresh([FromServices] DeviceManage dm) {

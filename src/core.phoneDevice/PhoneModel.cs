@@ -22,9 +22,8 @@ namespace core.phoneDevice
 
         public string Model { get; set; }
 
-        public bool Online { get; set; }
+        public PhoneStatus phoneStatus { get; set; }
 
-        public bool IsRun { get; set; }
 
         /// <summary>
         /// 最后安装的apk
@@ -55,7 +54,7 @@ namespace core.phoneDevice
             CustomTask workItem;
             bool dequeueSuccesful = false;
             while (true) {
-                if (!Online) break;
+                if (phoneStatus!= PhoneStatus.RunCase) break;
                 dequeueSuccesful = privateQueue.TryDequeue(out workItem);
 
                 if (!dequeueSuccesful)
@@ -97,10 +96,14 @@ namespace core.phoneDevice
 
             var installResult = install.Result;
             var uiautomatorResult = uiautomator.Result;
-            if(installResult.ToLower().Contains("sucess") || installResult.Contains("[-99]")) {
-                this.LastInstallApk = new ApkInfo(apkFile, packageName);
 
+
+
+
+            if(installResult.ToLower().Contains("success") || installResult.Contains("[-99]")) {
+                this.LastInstallApk = new ApkInfo(apkFile, packageName);
                 _logger.LogInformation($"{this.Device}:install {apkFile} is sucess!");
+                _logger.LogInformation($"{installResult}");
                 return true;
             } else {
                 _logger.LogError($"{this.Device}:install {apkFile} is fail!");
@@ -122,5 +125,13 @@ namespace core.phoneDevice
 
         public string ApkFile { get; private set; }
         public string PackageName { get; private set; }
+    }
+
+
+    public enum PhoneStatus {
+        OffLine = 0,
+        OnLine =1,
+        RunCase = 2,
+        UnUsed = -1
     }
 }

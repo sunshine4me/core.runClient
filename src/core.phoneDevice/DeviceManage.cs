@@ -42,7 +42,7 @@ namespace core.phoneDevice {
                 if (pml.FirstOrDefault(t => t.Device == x) == null) {
                     PhoneModel pm = new PhoneModel(CQs, _logger);
                     pm.Device = x;
-                    pm.Online = true;
+                    pm.phoneStatus = PhoneStatus.OnLine;
                     string modresult = ExtCommand.Shell("adb", $"-s {pm.Device} shell getprop ro.product.model").Result;
                     pm.Model = modresult.Trim();
 
@@ -71,7 +71,7 @@ namespace core.phoneDevice {
                 if (pml.FirstOrDefault(t => t.Device == x) == null) {
                     PhoneModel pm = new PhoneModel(CQs, _logger);
                     pm.Device = x;
-                    pm.Online = true;
+                    pm.phoneStatus = PhoneStatus.OnLine;
                     string modresult = ExtCommand.Shell("adb", $"-s {pm.Device} shell getprop ro.product.model").Result;
                     pm.Model = modresult.Trim();
 
@@ -83,9 +83,9 @@ namespace core.phoneDevice {
                 }
             }
 
-            pml.Where(t => !ds.Contains(t.Device)).ToList().ForEach(t => t.Online = false);
+            pml.Where(t => !ds.Contains(t.Device)).ToList().ForEach(t => t.phoneStatus = PhoneStatus.OffLine);
 
-            pml.Where(t => ds.Contains(t.Device)).ToList().ForEach(t => t.Online = true);
+            pml.Where(t =>  t.phoneStatus == PhoneStatus.OffLine && ds.Contains(t.Device) ).ToList().ForEach(t => t.phoneStatus = PhoneStatus.OnLine);
 
         }
 
@@ -106,8 +106,8 @@ namespace core.phoneDevice {
 
         public void run() {
             foreach (var pm in pml) {
-                if (!pm.IsRun) {
-                    pm.IsRun = true;
+                if (pm.phoneStatus == PhoneStatus.OnLine) {
+                    pm.phoneStatus = PhoneStatus.RunCase;
                     Task.Run(() => {
                         try {
                             _logger.LogInformation($"{pm.Device}:run start!");
@@ -116,7 +116,7 @@ namespace core.phoneDevice {
                         } catch (Exception e) {
                             _logger.LogError(e.StackTrace);
                         }
-                        pm.IsRun = false;
+                        pm.phoneStatus = PhoneStatus.OnLine;
                     });
                 }
             }

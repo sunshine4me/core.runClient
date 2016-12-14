@@ -4,37 +4,58 @@
 }
 
 
-
 <div class="row">
-
-    <table class="table table-bordered">
-        <caption>@ViewData["Title"]</caption>
-        <thead>
-            <tr>
-                <th>JobType</th>
-                <th>Name</th>
-                <th>ResultType</th>
-                <th>Result</th>
-                <th>Device</th>
-                <th>RunDate</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var m in Model) {
-                <tr class="task" onclick="parent.location = '/ResultFile/@m.Id';">
-                    <td>Smoke Test</td>
-                    <td>@m.Name</td>
-                    <td>@( m.RunStatus == 0?"No Run": m.RunStatus == 1?"Pass":"Fail")</td>
-                    <td><pre>@m.Result</pre></td>
-                    <td>@m.Device</td>
-                    <td>@m.RunDate</td>
-                    
-                </tr>
-            }
-
-        </tbody>
-    </table>
-
    
-</div>
+    </div>
+    <div class="row">
+
+        <table class="table table-bordered">
+            <caption>
+            
+            @ViewData["Title"]
+            
+                <div class="pull-right summery">
+                    <span>Total:@Model.Count</span>
+                    <span class="pass">Pass:@Model.Count(t => t.RunStatus == 1)</span>
+                    <span class="fail">Fail:@Model.Count(t => t.RunStatus > 1)</span>
+                    <span>NoRun:@Model.Count(t => t.RunStatus == 0)</span>
+                </div>
+            </caption>
+            <thead>
+                <tr>
+                    <th>JobType</th>
+                    <th>Name</th>
+                    <th>ResultType</th>
+                    <th>Result</th>
+                    <th>Device</th>
+                    <th>RunDate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model) {
+                    <tr class="task" onclick="parent.location = '/ResultFile/@m.Id';">
+                        <td>Smoke Test</td>
+                        <td>@m.Name</td>
+                        <td>
+                        @if (m.RunStatus == 0) {
+                            <span>NoRun</span>
+                        } else if (m.RunStatus == 1) {
+                            <span class="pass">Pass</span>
+                        } else {
+
+                            <span class="fail">Fail</span>
+                        }
+                       </td>
+                        <td><pre>@m.Result</pre></td>
+                        <td>@m.Device</td>
+                        <td>@m.RunDate</td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+
+    </div>
 

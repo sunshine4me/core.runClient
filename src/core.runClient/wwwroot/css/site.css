@@ -84,3 +84,16 @@ tr.job:hover,tr.task:hover{
     color:cyan;
 
 }
+
+.summery > span{
+     font-weight:bold;
+     margin-right:10px;
+}
+
+span.fail{
+     color:red;
+}
+
+span.pass{
+     color:green;
+}
